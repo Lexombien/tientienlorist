@@ -86,18 +86,8 @@ const App: React.FC = () => {
 
   // Global Settings với giá trị mặc định tiếng Việt chuẩn
   const [globalSettings, setGlobalSettings] = useState(() => {
-    // Load from localStorage immediately to prevent FOUC
-    const saved = localStorage.getItem('global_settings');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error('Failed to parse global_settings:', e);
-      }
-    }
-
-    // Fallback defaults
-    return {
+    // Default values
+    const defaults = {
       // Display Settings
       aspectRatio: '3/4',
       customValue: '',
@@ -132,6 +122,23 @@ const App: React.FC = () => {
       // Custom CSS
       customCSS: ''
     };
+
+    // Load from localStorage and merge with defaults
+    const saved = localStorage.getItem('global_settings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Merge với defaults để đảm bảo tất cả trường đều tồn tại
+        return { ...defaults, ...parsed };
+      } catch (e) {
+        console.error('Failed to parse global_settings:', e);
+        // Clear corrupted data
+        localStorage.removeItem('global_settings');
+      }
+    }
+
+    // Fallback to defaults
+    return defaults;
   });
 
   // Lightbox State
@@ -287,43 +294,75 @@ const App: React.FC = () => {
 
   // Khởi tạo dữ liệu từ LocalStorage
   useEffect(() => {
-    const savedProducts = localStorage.getItem('flowers_data');
-    const savedCategories = localStorage.getItem('categories_data');
-    const savedSettings = localStorage.getItem('global_settings');
-    const savedCategorySettings = localStorage.getItem('category_settings');
     const authStatus = sessionStorage.getItem('admin_auth');
-
     if (authStatus === 'true') setIsAuthenticated(true);
 
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts));
-    } else {
-      setProducts([]); // Empty array instead of FLOWERS_SAMPLES
+    // Load products with error handling
+    try {
+      const savedProducts = localStorage.getItem('flowers_data');
+      if (savedProducts) {
+        setProducts(JSON.parse(savedProducts));
+      } else {
+        setProducts([]); // Empty array instead of FLOWERS_SAMPLES
+      }
+    } catch (e) {
+      console.error('Failed to parse flowers_data:', e);
+      localStorage.removeItem('flowers_data');
+      setProducts([]);
     }
 
-    if (savedCategories) {
-      setCategories(JSON.parse(savedCategories));
-    } else {
+    // Load categories with error handling
+    try {
+      const savedCategories = localStorage.getItem('categories_data');
+      if (savedCategories) {
+        setCategories(JSON.parse(savedCategories));
+      } else {
+        setCategories(DEFAULT_CATEGORIES);
+        localStorage.setItem('categories_data', JSON.stringify(DEFAULT_CATEGORIES));
+      }
+    } catch (e) {
+      console.error('Failed to parse categories_data:', e);
+      localStorage.removeItem('categories_data');
       setCategories(DEFAULT_CATEGORIES);
       localStorage.setItem('categories_data', JSON.stringify(DEFAULT_CATEGORIES));
     }
 
-    if (savedSettings) {
-      setGlobalSettings(prev => ({ ...prev, ...JSON.parse(savedSettings) }));
-    } else {
-      // Nếu chưa có trong LS, dùng giá trị mặc định hiện tại (đã khai báo ở useState)
-      // Không set lại state để tránh mất dữ liệu
-      // Chỉ lưu vào LS để lần sau dùng
-      // Lưu ý: Chúng ta không thể truy cập globalSettings mới nhất ở đây nếu không đưa vào dep array
-      // Nhưng vì đây là init run, globalSettings ở closure là giá trị khởi tạo (đầy đủ).
+    // Load settings with error handling (already handled in useState, but double-check here)
+    try {
+      const savedSettings = localStorage.getItem('global_settings');
+      if (savedSettings) {
+        setGlobalSettings(prev => ({ ...prev, ...JSON.parse(savedSettings) }));
+      } else {
+        localStorage.setItem('global_settings', JSON.stringify(globalSettings));
+      }
+    } catch (e) {
+      console.error('Failed to parse global_settings:', e);
+      localStorage.removeItem('global_settings');
       localStorage.setItem('global_settings', JSON.stringify(globalSettings));
     }
 
-    // NEW: Initialize category settings
-    if (savedCategorySettings) {
-      setCategorySettings(JSON.parse(savedCategorySettings));
-    } else {
-      // Create default settings for each category
+    // NEW: Initialize category settings with error handling
+    try {
+      const savedCategorySettings = localStorage.getItem('category_settings');
+      if (savedCategorySettings) {
+        setCategorySettings(JSON.parse(savedCategorySettings));
+      } else {
+        // Create default settings for each category
+        const defaultCategorySettings: Record<string, CategorySettings> = {};
+        DEFAULT_CATEGORIES.forEach(cat => {
+          defaultCategorySettings[cat] = {
+            name: cat,
+            itemsPerPage: 8,
+            paginationType: 'none',
+            imageTransition: 'fade'
+          };
+        });
+        setCategorySettings(defaultCategorySettings);
+        localStorage.setItem('category_settings', JSON.stringify(defaultCategorySettings));
+      }
+    } catch (e) {
+      console.error('Failed to parse category_settings:', e);
+      localStorage.removeItem('category_settings');
       const defaultCategorySettings: Record<string, CategorySettings> = {};
       DEFAULT_CATEGORIES.forEach(cat => {
         defaultCategorySettings[cat] = {
@@ -336,6 +375,7 @@ const App: React.FC = () => {
       setCategorySettings(defaultCategorySettings);
       localStorage.setItem('category_settings', JSON.stringify(defaultCategorySettings));
     }
+
 
     // AUTO-LOAD FROM SERVER (để user luôn thấy data mới nhất!)
     const loadDataFromServer = async () => {
@@ -1851,7 +1891,7 @@ const App: React.FC = () => {
                                   onEdit={openEditModal}
                                   globalAspectRatio={
                                     globalSettings.aspectRatio === 'custom'
-                                      ? globalSettings.customValue.replace(/:/g, '/').replace(/x/gi, '/')
+                                      ? (globalSettings.customValue || '3/4').replace(/:/g, '/').replace(/x/gi, '/')
                                       : globalSettings.aspectRatio
                                   }
                                   mediaMetadata={mediaMetadata}
@@ -1900,7 +1940,7 @@ const App: React.FC = () => {
                                   onEdit={openEditModal}
                                   globalAspectRatio={
                                     globalSettings.aspectRatio === 'custom'
-                                      ? globalSettings.customValue.replace(/:/g, '/').replace(/x/gi, '/')
+                                      ? (globalSettings.customValue || '3/4').replace(/:/g, '/').replace(/x/gi, '/')
                                       : globalSettings.aspectRatio
                                   }
                                   mediaMetadata={mediaMetadata}
@@ -2233,7 +2273,7 @@ const App: React.FC = () => {
 
           const currentPage = categoryPages[category] || 1;
           const currentAspectRatio = globalSettings.aspectRatio === 'custom'
-            ? globalSettings.customValue.replace(/:/g, '/').replace(/x/gi, '/')
+            ? (globalSettings.customValue || '3/4').replace(/:/g, '/').replace(/x/gi, '/')
             : globalSettings.aspectRatio;
 
           return (
