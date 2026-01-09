@@ -7,6 +7,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import sharp from 'sharp';
+import { cacheMiddleware, getCacheStats, clearAllCache, preloadCache } from './utils/cacheManager.js';
 
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -795,6 +796,49 @@ app.delete('/api/orders/:id', (req, res) => {
         res.json({ success: true, message: 'Đã xóa đơn hàng' });
     } catch (error) {
         console.error('❌ Lỗi xóa order:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ==================== CACHE MANAGEMENT APIs ====================
+
+// GET: Get cache statistics
+app.get('/api/cache/stats', (req, res) => {
+    try {
+        const stats = getCacheStats();
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST: Clear all cache
+app.post('/api/cache/clear', (req, res) => {
+    try {
+        const result = clearAllCache();
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// POST: Preload cache
+app.post('/api/cache/preload', async (req, res) => {
+    try {
+        const protocol = req.get('x-forwarded-proto') || req.protocol;
+        const host = req.get('host');
+        const baseURL = `${protocol}://${host}`;
+
+        // Critical pages to preload
+        const endpoints = [
+            '/',
+            '/api/database',
+            '/api/uploads'
+        ];
+
+        const result = await preloadCache(baseURL, endpoints);
+        res.json(result);
+    } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 });

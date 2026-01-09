@@ -13,6 +13,7 @@ import ProductOrderModal from './components/ProductOrderModal';
 import ProductFormModal from './components/ProductFormModal';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import OrdersManagement from './components/OrdersManagement';
+import CacheManagement from './components/CacheManagement';
 import { loadAnalyticsData, trackPageView, trackProductClick, exportAnalytics, clearAllAnalytics, clearOldAnalytics } from './utils/analytics';
 
 // Auto-detect backend URL based on environment
@@ -46,8 +47,8 @@ const App: React.FC = () => {
   const [draggedProduct, setDraggedProduct] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // NEW: admin tabs - EXPANDED with 'orders'
-  const [activeTab, setActiveTab] = useState<'products' | 'media' | 'css' | 'analytics' | 'orders'>('products');
+  // NEW: admin tabs - EXPANDED with 'orders' and 'cache'
+  const [activeTab, setActiveTab] = useState<'products' | 'media' | 'css' | 'analytics' | 'orders' | 'cache'>('products');
 
   // NEW: Global Media Metadata (SEO)
   const [mediaMetadata, setMediaMetadata] = useState<Record<string, { alt?: string, title?: string, description?: string }>>({});
@@ -1070,6 +1071,15 @@ const App: React.FC = () => {
                 }`}
             >
               📦 Quản Lý Đơn Hàng
+            </button>
+            <button
+              onClick={() => setActiveTab('cache')}
+              className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'cache'
+                ? 'bg-gradient-pink text-white shadow-lg'
+                : 'text-neutral-600 hover:bg-white/50'
+                }`}
+            >
+              ⚡ Cache
             </button>
           </div>
         </div>
@@ -2096,6 +2106,11 @@ const App: React.FC = () => {
             <>
               {/* Orders Management Component */}
               <OrdersManagement />
+            </>
+          ) : activeTab === 'cache' ? (
+            <>
+              {/* Cache Management Component */}
+              <CacheManagement backendURL={BACKEND_URL} />
             </>
           ) : null}
         </main>
