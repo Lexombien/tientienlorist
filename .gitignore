@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# User uploads & data
+uploads/
+database.json
+analytics.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pm2.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Backup files
+*.bak
+backup-*.tar.gz
+
+# Windows scripts (keep for dev, ignore for prod)
+*.bat
+
+# Sensitive info
+Tạo\ PASS\ admin.txt
+
+# Optional: Keep these for reference but ignore for cleaner repo
+# debug*.sh
+# fix-*.sh
+# setup-*.sh
+# deploy*.sh
+# upload-to-vps.ps1
+# laragon-proxy.conf

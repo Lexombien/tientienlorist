@@ -1,0 +1,400 @@
+/* ====================================
+   IMAGE TRANSITION EFFECTS
+   Hơn 20 hiệu ứng chuyển đổi ảnh đẹp mắt
+   ==================================== */
+
+/* Base transition styles */
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-container img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 1. FADE - Mờ dần */
+.transition-fade img {
+    transition: opacity 1s ease-in-out;
+    opacity: 0;
+}
+
+.transition-fade img.active {
+    opacity: 1;
+}
+
+/* 2. SLIDE LEFT - Trượt từ phải sang trái */
+.transition-slide-left img {
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.transition-slide-left img.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* 3. SLIDE RIGHT - Trượt từ trái sang phải */
+.transition-slide-right img {
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s;
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.transition-slide-right img.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* 4. SLIDE UP - Trượt lên từ dưới */
+.transition-slide-up img {
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s;
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.transition-slide-up img.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* 5. SLIDE DOWN - Trượt xuống từ trên */
+.transition-slide-down img {
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s;
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.transition-slide-down img.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* 6. ZOOM IN - Phóng to từ nhỏ */
+.transition-zoom-in img {
+    transition: transform 1s ease-in-out, opacity 1s;
+    transform: scale(0.5);
+    opacity: 0;
+}
+
+.transition-zoom-in img.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 7. ZOOM OUT - Thu nhỏ từ to */
+.transition-zoom-out img {
+    transition: transform 1s ease-in-out, opacity 1s;
+    transform: scale(1.5);
+    opacity: 0;
+}
+
+.transition-zoom-out img.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* 8. FLIP HORIZONTAL - Lật ngang */
+.transition-flip-horizontal {
+    perspective: 1000px;
+}
+
+.transition-flip-horizontal img {
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: rotateY(90deg);
+    opacity: 0;
+}
+
+.transition-flip-horizontal img.active {
+    transform: rotateY(0deg);
+    opacity: 1;
+}
+
+/* 9. FLIP VERTICAL - Lật dọc */
+.transition-flip-vertical {
+    perspective: 1000px;
+}
+
+.transition-flip-vertical img {
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: rotateX(90deg);
+    opacity: 0;
+}
+
+.transition-flip-vertical img.active {
+    transform: rotateX(0deg);
+    opacity: 1;
+}
+
+/* 10. ROTATE LEFT - Xoay trái */
+.transition-rotate-left {
+    perspective: 1000px;
+}
+
+.transition-rotate-left img {
+    transition: transform 1s ease-in-out, opacity 1s;
+    transform: rotate(-180deg) scale(0.5);
+    opacity: 0;
+}
+
+.transition-rotate-left img.active {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+}
+
+/* 11. ROTATE RIGHT - Xoay phải */
+.transition-rotate-right {
+    perspective: 1000px;
+}
+
+.transition-rotate-right img {
+    transition: transform 1s ease-in-out, opacity 1s;
+    transform: rotate(180deg) scale(0.5);
+    opacity: 0;
+}
+
+.transition-rotate-right img.active {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+}
+
+/* 12. BLUR FADE - Mờ ảnh + fade */
+.transition-blur-fade img {
+    transition: filter 0.8s ease-in-out, opacity 0.8s;
+    filter: blur(20px);
+    opacity: 0;
+}
+
+.transition-blur-fade img.active {
+    filter: blur(0);
+    opacity: 1;
+}
+
+/* 13. GLITCH - Hiệu ứng lỗi kỹ thuật số */
+@keyframes glitch-anim {
+
+    0%,
+    100% {
+        transform: translate(0);
+        opacity: 1;
+    }
+
+    20% {
+        transform: translate(-5px, 5px);
+        opacity: 0.8;
+    }
+
+    40% {
+        transform: translate(-5px, -5px);
+        opacity: 0.9;
+    }
+
+    60% {
+        transform: translate(5px, 5px);
+        opacity: 0.7;
+    }
+
+    80% {
+        transform: translate(5px, -5px);
+        opacity: 0.85;
+    }
+}
+
+.transition-glitch img:not(.active) {
+    opacity: 0;
+}
+
+.transition-glitch img.active {
+    animation: glitch-anim 0.5s;
+    opacity: 1;
+}
+
+/* 14. WIPE LEFT - Quét từ phải sang trái */
+.transition-wipe-left img {
+    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: inset(0 0 0 100%);
+}
+
+.transition-wipe-left img.active {
+    clip-path: inset(0 0 0 0);
+}
+
+/* 15. WIPE RIGHT - Quét từ trái sang phải */
+.transition-wipe-right img {
+    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: inset(0 100% 0 0);
+}
+
+.transition-wipe-right img.active {
+    clip-path: inset(0 0 0 0);
+}
+
+/* 16. WIPE UP - Quét từ dưới lên */
+.transition-wipe-up img {
+    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: inset(100% 0 0 0);
+}
+
+.transition-wipe-up img.active {
+    clip-path: inset(0 0 0 0);
+}
+
+/* 17. WIPE DOWN - Quét từ trên xuống */
+.transition-wipe-down img {
+    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: inset(0 0 100% 0);
+}
+
+.transition-wipe-down img.active {
+    clip-path: inset(0 0 0 0);
+}
+
+/* 18. DIAGONAL LEFT - Chéo từ góc phải */
+.transition-diagonal-left img {
+    transition: clip-path 1s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+}
+
+.transition-diagonal-left img.active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* 19. DIAGONAL RIGHT - Chéo từ góc trái */
+.transition-diagonal-right img {
+    transition: clip-path 1s cubic-bezier(0.65, 0, 0.35, 1);
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+}
+
+.transition-diagonal-right img.active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* 20. CUBE LEFT - Hiệu ứng lập phương trái */
+.transition-cube-left {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+.transition-cube-left img {
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: rotateY(90deg) translateZ(-200px);
+    opacity: 0;
+}
+
+.transition-cube-left img.active {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+}
+
+/* 21. CUBE RIGHT - Hiệu ứng lập phương phải */
+.transition-cube-right {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+.transition-cube-right img {
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: rotateY(-90deg) translateZ(-200px);
+    opacity: 0;
+}
+
+.transition-cube-right img.active {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+}
+
+/* 22. BOUNCE - Nảy lên */
+@keyframes bounce-in {
+    0% {
+        transform: scale(0) translateY(-100%);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1) translateY(0);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.transition-bounce img:not(.active) {
+    opacity: 0;
+}
+
+.transition-bounce img.active {
+    animation: bounce-in 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 1;
+}
+
+/* 23. ELASTIC - Co giãn */
+@keyframes elastic-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.25);
+    }
+
+    75% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.transition-elastic img:not(.active) {
+    opacity: 0;
+}
+
+.transition-elastic img.active {
+    animation: elastic-in 1s ease-out;
+    opacity: 1;
+}
+
+/* 24. SWING - Đung đưa */
+@keyframes swing-in {
+    0% {
+        transform: rotate(-45deg) scale(0);
+        transform-origin: top center;
+        opacity: 0;
+    }
+
+    50% {
+        transform: rotate(10deg) scale(1);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+.transition-swing {
+    perspective: 1000px;
+}
+
+.transition-swing img:not(.active) {
+    opacity: 0;
+}
+
+.transition-swing img.active {
+    animation: swing-in 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 1;
+}
