@@ -110,7 +110,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 
             {/* Products Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-                {displayProducts.map((flower) => (
+                {displayProducts.map((flower, index) => (
                     <FlowerCard
                         key={flower.id}
                         product={{
@@ -125,6 +125,7 @@ const CategorySection: React.FC<CategorySectionProps> = ({
                         zaloLink={zaloLink}
                         enablePriceDisplay={enablePriceDisplay}
                         onOrderClick={onOrderClick}
+                        productIndex={index}
                     />
                 ))}
             </div>

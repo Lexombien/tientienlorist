@@ -21,6 +21,7 @@ interface FlowerCardProps {
   zaloLink?: string; // NEW: Customizable Zalo link
   enablePriceDisplay?: boolean; // NEW: Show/hide price
   onOrderClick?: (product: FlowerProduct) => void; // NEW: Order button click handler
+  productIndex?: number; // NEW: Index of product in list for lazy loading
 }
 
 const FlowerCard: React.FC<FlowerCardProps> = ({
@@ -34,13 +35,17 @@ const FlowerCard: React.FC<FlowerCardProps> = ({
   showSKU = false,
   zaloLink = 'https://zalo.me/0900000000',
   enablePriceDisplay = true,
-  onOrderClick
+  onOrderClick,
+  productIndex = 0
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Get transition class
   const transitionEffect = product.imageTransition || 'fade';
   const transitionClass = `transition-${transitionEffect}`;
+
+  // Lazy load only from 5th product onward (index >= 4)
+  const shouldLazyLoad = productIndex >= 4;
 
   // Helper function to extract filename from URL
   const getFilenameFromUrl = (url: string) => {
@@ -135,7 +140,7 @@ const FlowerCard: React.FC<FlowerCardProps> = ({
               alt={imagesToDisplay[0].alt}
               title={imagesToDisplay[0].title}
               className="active active-image w-full h-full object-cover absolute top-0 left-0"
-              loading="lazy"
+              {...(shouldLazyLoad ? { loading: 'lazy' } : {})}
             />
           ) : (
             // User mode: Full carousel
@@ -146,7 +151,7 @@ const FlowerCard: React.FC<FlowerCardProps> = ({
                 alt={imgData.alt}
                 title={imgData.title}
                 className={`w-full h-full object-cover absolute top-0 left-0 ${index === currentImageIndex ? 'active active-image' : ''}`}
-                loading="lazy"
+                {...(shouldLazyLoad ? { loading: 'lazy' } : {})}
               />
             ))
           )}
